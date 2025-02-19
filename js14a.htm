@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>15 Puzzle Game</title>
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                height: 700px;
+                justify-content: center;
+            }
+            table { border-collapse: collapse; } 
+            td { width: 100px; height: 100px; border: 1px solid #333; 
+                 font: bold 2em Arial; text-align: center; cursor: pointer; }
+            #window{
+                margin-top: 50px;
+                position: relative;
+                left:30%;
+                width: 360px;
+                border-radius: 15px;
+                border: 1px solid green;
+                display: none; 
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                height: 180px;
+                background-color: rgb(227, 226, 226);
+            }
+            #profile {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                background-color: rgb(200, 200, 200);
+                border-radius: 15px;
+            }
+            #profleft{
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            #image{
+                height: 64px;
+                width: 64px;
+                border-radius: 50%;
+                background:url(./russian-middle-age-women-neutral-background_987764-194893.avif) center/cover;
+            }     
+            button{
+                border: none;
+                background-color: initial;
+                font-size: 24px;
+                margin-top: -24px;
+                font-size: bold;
+                color: red;
+                cursor: pointer; 
+            }
+            #content{
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap:5px;
+                span{
+                margin-left: 5px;
+                padding: 5px 20px 5px 20px;
+                border-radius: 15px;
+                background-color: chartreuse;
+                border: 1px solid grey;
+                font-size: 18px;}
+            }
+            #span1{
+                width: 120px;
+            }
+            #span2{
+                width: 90px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="status"></h1>
+        <table id="oyun"></table>   
+        <audio id="ntfc" src="/mixkit-positive-notification-951.wav"></audio>
+        <div id="window">
+            <div id="profile">
+                <div id="profleft">
+                    <div id="image"></div>
+                    <span>Наташа 32 года (4 км от тебя)</span>
+                </div>
+                <button id="closeButton" onclick="document.getElementById('window').style.display = 'none'">x</button>
+            </div>
+            <div id="content">
+                <span id="span1">Я вся 🔥🔥🔥</span>
+                <span id="span2">приезжай</span>
+            </div>
+        </div>
+
+        <script>
+            const status = document.getElementById('status')
+            const oyun = document.getElementById('oyun')
+            const windowElement = document.getElementById('window')
+            let kod = ''
+            let x = 0
+            let bos = []
+            let arr = ['']
+            for (let i = 1; i <= 15; i++) arr.push(i)
+            arr.sort(() => Math.random() - 0.5)
+
+            for (let i = 1; i <= 4; i++) {
+                kod += '<tr>'
+                for (let j = 1; j <= 4; j++) {
+                    if(arr[x] === '') bos = [i, j]
+                    kod += `<td id="x${i}${j}" onclick="surus(${i}, ${j})">${arr[x++]}</td>`
+                }   
+                kod += '</tr>'
+            }
+            oyun.innerHTML = kod
+
+            function surus(i, j) {
+                if (i === bos[0] && Math.abs(j - bos[1]) === 1 ||
+                    j === bos[1] && Math.abs(i - bos[0]) === 1) {
+                    let carix = document.getElementById(`x${i}${j}`)
+                    let bosx = document.getElementById(`x${ bos[0] }${ bos[1] }`)
+                    bosx.innerHTML = carix.innerHTML
+                    carix.innerHTML = ''
+                    bos = [i, j]
+                    checkWin()
+                }
+            }
+
+            function checkWin() {
+                let num = 1
+                let isWin = true 
+
+                for (let i = 1; i <= 4; i++) {
+                    for (let j = 1; j <= 4; j++) {
+                        let cell = document.getElementById(`x${i}${j}`).innerHTML
+                        if (i === 4 && j === 4) {
+                            if (cell !== '') isWin = false
+                        } else {
+                            if (cell != num++) isWin = false
+                        }
+                    }
+                }
+
+                if (isWin) {
+                    status.innerHTML = "You Won!"
+                }
+            }
+
+            setTimeout(() => {
+                windowElement.style.display = 'flex';
+                const audio = document.getElementById('ntfc') 
+                audio.play();
+            }, 5000);
+        </script>
+    </body>
+</html>
